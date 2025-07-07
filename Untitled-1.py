@@ -1,10 +1,7 @@
-light = input("Enter a traffic light: ")
-
-if light == "red":
-    print("Stop")
-elif light == "yellow":
-    print("Ready to stop")    
-elif light == "green":
-    print("Go")
-else:
-    print("That is not traffic light color")        
+print("ชื่อ - สกุล ซ บุณยกร เฉลิมพรวิทิต")
+print("ชื่อเล่น : วิน")
+print("ที่อยู่ : ตลาดบางปะกอก")
+print("อายุ : 16")
+print("เรียนอยู่ระดับชั้น : มัธยมศึกษาปีที่ 5")
+print("อาหารที่ชอบ : ข้าวไข่เจียว")
+print("ชอบอะไรในด้านเทคโนโลยี : ระบบต่างๆในเทคโนโลยีและเกม")
