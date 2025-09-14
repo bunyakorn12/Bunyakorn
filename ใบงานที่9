@@ -1,0 +1,97 @@
+# -*- coding: utf-8 -*-
+import tkinter as tk
+from tkinter import messagebox
+import requests
+from bs4 import BeautifulSoup
+
+def fetch_lottery_data():
+    """
+    ดึงข้อมูลหวยจากเว็บไซต์ https://www.lottery.co.th/small
+    และส่งคืนข้อมูลในรูปแบบ dictionary
+    """
+    url = "https://www.lottery.co.th/small"
+    try:
+        response = requests.get(url)
+        # ตั้งค่า encoding เพื่อให้สามารถอ่านภาษาไทยได้ถูกต้อง
+        response.encoding = 'utf-8'
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        lottery_data = {
+            'last_2_digits': [],
+            'first_3_digits': [],
+            'last_3_digits': []
+        }
+        
+        # ค้นหาส่วนของข้อมูลหวยล่าสุด (เลข 2 ตัว, 3 ตัว)
+        lottery_section = soup.find('div', class_='box-l-lot')
+        
+        if lottery_section:
+            # ดึงเลขท้าย 2 ตัว
+            last_2_digits_tag = lottery_section.find('li', class_='lot-c')
+            if last_2_digits_tag:
+                lottery_data['last_2_digits'].append(last_2_digits_tag.get_text(strip=True))
+
+            # ดึงเลขท้าย 3 ตัวและเลขหน้า 3 ตัว
+            last_3_digits_tags = lottery_section.find_all('li', class_='lot-b')
+            
+            # เลขหน้า 3 ตัว จะเป็น 2 ตัวแรก
+            if len(last_3_digits_tags) >= 2:
+                for i in range(2):
+                    lottery_data['first_3_digits'].append(last_3_digits_tags[i].get_text(strip=True))
+                
+                # เลขท้าย 3 ตัว จะเป็น 2 ตัวถัดมา
+                if len(last_3_digits_tags) >= 4:
+                    for i in range(2, 4):
+                        lottery_data['last_3_digits'].append(last_3_digits_tags[i].get_text(strip=True))
+        
+        return lottery_data
+        
+    except requests.exceptions.RequestException as e:
+        messagebox.showerror("ข้อผิดพลาด", f"ไม่สามารถเชื่อมต่อเว็บไซต์ได้: {e}")
+        return None
+
+def create_gui():
+    """
+    สร้าง GUI สำหรับแสดงผลข้อมูลหวย
+    """
+    root = tk.Tk()
+    root.title("ผลสลากกินแบ่งรัฐบาล")
+    root.geometry("400x300")
+    
+    # ดึงข้อมูลมาแสดงผล
+    lottery_info = fetch_lottery_data()
+    
+    if lottery_info:
+        # สร้าง Frame เพื่อจัดระเบียบการแสดงผล
+        main_frame = tk.Frame(root, padx=20, pady=20)
+        main_frame.pack(expand=True)
+        
+        # หัวข้อ
+        title_label = tk.Label(main_frame, text="ผลสลากกินแบ่งรัฐบาล", font=("Helvetica", 16, "bold"))
+        title_label.pack(pady=10)
+        
+        # แสดงผลเลขท้าย 2 ตัว
+        tk.Label(main_frame, text="เลขท้าย 2 ตัว:", font=("Helvetica", 12, "bold")).pack(anchor='w')
+        if lottery_info['last_2_digits']:
+            tk.Label(main_frame, text=", ".join(lottery_info['last_2_digits']), font=("Helvetica", 14), fg="red").pack(pady=5)
+        else:
+            tk.Label(main_frame, text="ไม่พบข้อมูล").pack(pady=5)
+            
+        # แสดงผลเลขหน้า 3 ตัว
+        tk.Label(main_frame, text="เลขหน้า 3 ตัว:", font=("Helvetica", 12, "bold")).pack(anchor='w', pady=(10, 0))
+        if lottery_info['first_3_digits']:
+            tk.Label(main_frame, text=", ".join(lottery_info['first_3_digits']), font=("Helvetica", 14), fg="green").pack(pady=5)
+        else:
+            tk.Label(main_frame, text="ไม่พบข้อมูล").pack(pady=5)
+
+        # แสดงผลเลขท้าย 3 ตัว
+        tk.Label(main_frame, text="เลขท้าย 3 ตัว:", font=("Helvetica", 12, "bold")).pack(anchor='w', pady=(10, 0))
+        if lottery_info['last_3_digits']:
+            tk.Label(main_frame, text=", ".join(lottery_info['last_3_digits']), font=("Helvetica", 14), fg="blue").pack(pady=5)
+        else:
+            tk.Label(main_frame, text="ไม่พบข้อมูล").pack(pady=5)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_gui()
