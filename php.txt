@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ข้อมูลนักเรียน</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.8;
+            margin: 20px;
+        }
+        .profile-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-card">
+        <h2>แบบฟอร์มข้อมูลนักเรียน</h2>
+        
+        <?php
+            echo "<b>ชื่อ-สกุล:</b>นายบุณยกร เฉลิมพรวิทิต<br>";
+            echo "<b>เรียนอยู่ระดับชั้น:</b> 6 <b>ห้องเรียน:</b> 8 <br>";
+            echo "<b>เลขที่:</b> 12<br>";
+            echo "<b>ที่อยู่:</b> ตลาดบางปะกอก<br>";
+            echo "<b>ประวัติการศึกษา:</b>ชั้นประถมศึกษาโรงเรียนสารสาสน์สุขสวัสดิ์<br>";
+        ?>
+        
+    </div>
+
+</body>
+</html>
